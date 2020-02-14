@@ -36,3 +36,6 @@
 *.pgm
 *.ppm
 iptools
+
+#text files
+*.txt
