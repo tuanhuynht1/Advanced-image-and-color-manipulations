@@ -16,7 +16,7 @@ using namespace std;
 int main (int argc, char** argv){
 
 
-	Region R(200,200,5,4);
+	Region R(0,0,512,512);
 	// cout << R.i0 << " to " << R.ilim << endl;
 	// cout << R.j0 << " to " << R.jlim << endl;
 

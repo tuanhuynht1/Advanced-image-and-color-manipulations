@@ -31,10 +31,8 @@ Image_Statistics::Image_Statistics(image* src, Region roi){
         for(int j = 0; j < region.jlen; j++){
             pixel_map[i][j] = img->getPixel(i + region.i0, j + region.j0);
             int value = pixel_map[i][j];
-            // cout << value << " ";
             histogram[value]++; //increment frequency of that value
         }
-        // cout << endl;
     }
     //iterate through histogram to find mode
     int highest = histogram[0];
@@ -45,8 +43,6 @@ Image_Statistics::Image_Statistics(image* src, Region roi){
             mode = i;
         }
     }
-    cout << mode << endl;
-
 }
 
 int Image_Statistics::pixel(int i, int j){
@@ -59,8 +55,10 @@ int Image_Statistics::pixel(int i, int j){
 void Image_Statistics::writeHistogramToFile(){
     image output(HISTO_SIZE,HISTO_SIZE);
 
+    //coefficient for normalizing
+    float k = float(HISTO_SIZE - 1) / histogram[mode];
     for(int j = 0; j < HISTO_SIZE; j++){
-        int count = histogram[j];
+        int count = int(histogram[j] * k);  //normalize to fit
         for(int i  = HISTO_SIZE - 1; i > HISTO_SIZE-1 - count; i--){
             output.setPixel(i,j,MAXRGB);
         }
