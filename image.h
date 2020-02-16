@@ -16,8 +16,12 @@ struct imageData
 };
 
 struct Region{
-	int ilen, jlen, i, j;
-	Region(int rows, int cols, int i_origin, int j_origin) : ilen(rows), jlen(cols), i(i_origin), j(j_origin) {}
+	int i0, j0, ilim, jlim, ilen, jlen;
+	Region(int i_origin, int j_origin, int rows, int cols ){
+      i0 = i_origin, j0 = j_origin, ilen = rows, jlen = cols;
+      ilim = i0 + ilen;
+      jlim = j0 + jlen;
+   }
 };
 
 struct Color{
