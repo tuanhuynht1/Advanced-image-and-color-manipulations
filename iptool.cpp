@@ -16,18 +16,18 @@ using namespace std;
 int main (int argc, char** argv){
 
 
-	Region R(2,2,5,7);
+	Region R(200,200,5,4);
 	// cout << R.i0 << " to " << R.ilim << endl;
 	// cout << R.j0 << " to " << R.jlim << endl;
 
 	image img, *p;
 	img.read(strdup("baboon.pgm"));
-	for(int i = 2; i < 7; i++){
-		for(int j = 2; j < 9; j++){
-			cout << img.getPixel(i,j) << " ";
-		}
-		cout << endl;
-	}
+	// for(int i = 2; i < 7; i++){
+	// 	for(int j = 2; j < 9; j++){
+	// 		cout << img.getPixel(i,j) << " ";
+	// 	}
+	// 	cout << endl;
+	// }
 	p = &img;
 
 	cout << endl;
@@ -40,7 +40,9 @@ int main (int argc, char** argv){
 	}
 	cout << endl;
 
-	cout << img.getPixel(3,4) << " " << stat.pixel(3,4) << endl;
+	// cout << img.getPixel(90,100) << " " << stat.pixel(90,100) << endl;
+
+	stat.writeHistogramToFile();
 	// cout << stat.pixel_map.size() << " x " << stat.pixel_map[0].size() << endl; 
 
 	// image src, tgt;

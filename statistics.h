@@ -10,6 +10,7 @@ class Image_Statistics{
     Region region;
     vector<vector<int>> pixel_map;
     vector<int> histogram;
+    int mode;
 
     Image_Statistics(image* src, Region roi);
     int pixel(int i, int j);

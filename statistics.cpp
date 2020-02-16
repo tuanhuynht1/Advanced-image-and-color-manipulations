@@ -2,6 +2,7 @@
 
 #define MAXRGB 255
 #define MINRGB 0
+#define HISTO_SIZE 256
 
 Image_Statistics::Image_Statistics(image* src, Region roi){
     //initialize region and image for this statistics object
@@ -22,7 +23,7 @@ Image_Statistics::Image_Statistics(image* src, Region roi){
     pixel_map = temp1;
 
     //initialize histogram with zeros
-    vector<int> temp2(256,0);   // 0 - 255 
+    vector<int> temp2(HISTO_SIZE,0);   // 0 - 255 
     histogram = temp2;
 
     //iterate through each pixel in the roi of src image and populate map by offset to region origin
@@ -35,6 +36,17 @@ Image_Statistics::Image_Statistics(image* src, Region roi){
         }
         // cout << endl;
     }
+    //iterate through histogram to find mode
+    int highest = histogram[0];
+    mode = 0;
+    for(int i = 1; i < HISTO_SIZE; i++){
+        if(histogram[i] > highest){
+            highest = histogram[i];
+            mode = i;
+        }
+    }
+    cout << mode << endl;
+
 }
 
 int Image_Statistics::pixel(int i, int j){
@@ -42,4 +54,17 @@ int Image_Statistics::pixel(int i, int j){
         return -1;  //out of bounds
     }
     return pixel_map[i - region.i0][j - region.j0];
+}
+
+void Image_Statistics::writeHistogramToFile(){
+    image output(HISTO_SIZE,HISTO_SIZE);
+
+    for(int j = 0; j < HISTO_SIZE; j++){
+        int count = histogram[j];
+        for(int i  = HISTO_SIZE - 1; i > HISTO_SIZE-1 - count; i--){
+            output.setPixel(i,j,MAXRGB);
+        }
+    }
+
+    output.save("test_hist.pgm");
 }
