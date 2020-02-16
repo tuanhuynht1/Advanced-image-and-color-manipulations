@@ -39,6 +39,8 @@ int main (int argc, char** argv){
 		cout << i << ":" << stat.histogram[i] << " ";
 	}
 	cout << endl;
+
+	cout << img.getPixel(3,4) << " " << stat.pixel(3,4) << endl;
 	// cout << stat.pixel_map.size() << " x " << stat.pixel_map[0].size() << endl; 
 
 	// image src, tgt;

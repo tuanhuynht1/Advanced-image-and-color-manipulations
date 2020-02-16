@@ -30,12 +30,16 @@ Image_Statistics::Image_Statistics(image* src, Region roi){
         for(int j = 0; j < region.jlen; j++){
             pixel_map[i][j] = img->getPixel(i + region.i0, j + region.j0);
             int value = pixel_map[i][j];
-            cout << value << " ";
+            // cout << value << " ";
             histogram[value]++; //increment frequency of that value
         }
-        cout << endl;
+        // cout << endl;
     }
-    
 }
 
-// int pixel(int i, int j);
+int Image_Statistics::pixel(int i, int j){
+    if ( i >= region.ilim || j >= region.jlim || i < region.i0 || j < region.j0){
+        return -1;  //out of bounds
+    }
+    return pixel_map[i - region.i0][j - region.j0];
+}
