@@ -17,6 +17,7 @@ struct imageData
 
 struct Region{
 	int i0, j0, ilim, jlim, ilen, jlen;
+   Region(){};
 	Region(int i_origin, int j_origin, int rows, int cols ){
       i0 = i_origin, j0 = j_origin, ilen = rows, jlen = cols;
       ilim = i0 + ilen;

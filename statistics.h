@@ -17,9 +17,4 @@ class Image_Statistics{
 
 };
 
-
-
-
-
-
 #endif

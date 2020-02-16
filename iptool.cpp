@@ -5,6 +5,7 @@
 
 #include "utility.h"
 #include "image.h"
+#include "statistics.h"
 #include <vector>
 #include <chrono>
 
@@ -16,10 +17,22 @@ int main (int argc, char** argv){
 
 
 	Region R(2,2,5,7);
-	cout << R.i0 << " to " << R.ilim << endl;
-	cout << R.j0 << " to " << R.jlim << endl;
+	// cout << R.i0 << " to " << R.ilim << endl;
+	// cout << R.j0 << " to " << R.jlim << endl;
 
+	image img, *p;
+	img.read(strdup("baboon.pgm"));
+	for(int i = 2; i < 7; i++){
+		for(int j = 2; j < 9; j++){
+			cout << img.getPixel(i,j) << " ";
+		}
+		cout << endl;
+	}
+	p = &img;
 
+	cout << endl;
+	Image_Statistics stat(p,R);
+	// cout << stat.pixel_map.size() << " x " << stat.pixel_map[0].size() << endl; 
 
 	// image src, tgt;
 	// FILE *fp;
