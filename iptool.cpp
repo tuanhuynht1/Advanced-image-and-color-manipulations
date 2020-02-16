@@ -32,6 +32,13 @@ int main (int argc, char** argv){
 
 	cout << endl;
 	Image_Statistics stat(p,R);
+
+	cout << endl;
+	for(int i = 0; i < 256; i++){
+		if(stat.histogram[i] > 0)
+		cout << i << ":" << stat.histogram[i] << " ";
+	}
+	cout << endl;
 	// cout << stat.pixel_map.size() << " x " << stat.pixel_map[0].size() << endl; 
 
 	// image src, tgt;
