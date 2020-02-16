@@ -52,17 +52,17 @@ int Image_Statistics::pixel(int i, int j){
     return pixel_map[i - region.i0][j - region.j0];
 }
 
-void Image_Statistics::writeHistogramToFile(){
+void Image_Statistics::writeHistogramToFile(string filename){
     image output(HISTO_SIZE,HISTO_SIZE);
 
     //coefficient for normalizing
     float k = float(HISTO_SIZE - 1) / histogram[mode];
+
     for(int j = 0; j < HISTO_SIZE; j++){
         int count = int(histogram[j] * k);  //normalize to fit
         for(int i  = HISTO_SIZE - 1; i > HISTO_SIZE-1 - count; i--){
-            output.setPixel(i,j,MAXRGB);
+            output.setPixel(i,j,MAXRGB);    //set each count to appear as a white pixel
         }
     }
-
-    output.save("test_hist.pgm");
+    output.save(filename.c_str());
 }

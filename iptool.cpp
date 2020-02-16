@@ -42,7 +42,7 @@ int main (int argc, char** argv){
 
 	// cout << img.getPixel(90,100) << " " << stat.pixel(90,100) << endl;
 
-	stat.writeHistogramToFile();
+	stat.writeHistogramToFile("test.pgm");
 	// cout << stat.pixel_map.size() << " x " << stat.pixel_map[0].size() << endl; 
 
 	// image src, tgt;
