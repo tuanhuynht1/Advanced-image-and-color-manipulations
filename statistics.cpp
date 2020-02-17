@@ -36,7 +36,8 @@ Image_Statistics::Image_Statistics(image* src, Region roi){
     }
     // generateNewHistogram();
     setMode(); //set value with highest frequency
-    // cout << mode << endl;
+    setMean();
+    // cout << mean << endl;
 }
 
 void Image_Statistics::setMode(){
@@ -49,6 +50,35 @@ void Image_Statistics::setMode(){
             mode = i;
         }
     }
+}
+
+void Image_Statistics::setMean(){
+    int sum = 0, count = 0;
+    for(int i = 0; i < histogram.size(); i++){
+        sum += (i*histogram[i]);
+        count += histogram[i];
+    }
+    mean = double(sum) / count;
+}
+
+void Image_Statistics::setBOmeans(double& background, double& object, double threshold){
+    double bSum = 0, oSum = 0;
+    int bCount = 0, oCount = 0;
+    for(int i = 0; i < pixel_map.size(); i++){
+        for(int j = 0; j < pixel_map[0].size(); j++){
+            double value = pixel_map[i][j];
+            if(value < threshold){
+                bSum += value;
+                bCount++;
+            }
+            else{
+                oSum += value;
+                oCount++;
+            }
+        }
+    }
+    background = bSum / bCount;
+    object = oSum / oCount;
 }
 
 void Image_Statistics::generateNewHistogram(){
