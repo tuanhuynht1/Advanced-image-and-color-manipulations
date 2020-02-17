@@ -69,3 +69,20 @@ Image_Statistics utility::linearHistogramStretching(image& tgt, Region roi, int 
 	stat.setMode();
 	return stat;	
 }
+
+Image_Statistics utility::optimalThresholding(image& tgt, Region roi, double epsilon){
+	image* ip = &tgt;
+    Image_Statistics stat(ip,roi);
+
+	double backgroundMean, objectMean, tprev, t = stat.mean;
+	do{
+		tprev = t; //previous t value
+		stat.setBOmeans(backgroundMean,objectMean,tprev);
+		t = (backgroundMean + objectMean) / 2.0;
+		cout << backgroundMean << "," << objectMean << " " << t << "," << tprev << endl;
+	}while(abs(tprev - t) > epsilon);
+	
+	cout << endl << t << endl;
+	return stat;
+
+}

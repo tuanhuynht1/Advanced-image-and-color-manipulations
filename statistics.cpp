@@ -64,8 +64,8 @@ void Image_Statistics::setMean(){
 void Image_Statistics::setBOmeans(double& background, double& object, double threshold){
     double sum;
     int count;
-    int breakpoint = nearbyint(threshold);
-
+    int breakpoint = nearbyint(threshold);  //separates background pixels from object pixels
+    // calculate mean for background
     sum = 0;
     count = 0;
     for(int i = 0; i < breakpoint; i++){
@@ -73,7 +73,7 @@ void Image_Statistics::setBOmeans(double& background, double& object, double thr
         count += histogram[i]; 
     }
     background = sum / count;
-
+    //calculate mean for object
     sum = 0;
     count = 0;
     for(int i = breakpoint; i < histogram.size(); i++){

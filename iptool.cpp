@@ -16,7 +16,7 @@ using namespace std;
 int main (int argc, char** argv){
 
 
-	Region R(2,2,5,5);
+	Region R(0,0,500,500);
 	// cout << R.i0 << " to " << R.ilim << endl;
 	// cout << R.j0 << " to " << R.jlim << endl;
 
@@ -38,12 +38,8 @@ int main (int argc, char** argv){
 		cout << i << ":" << stat.histogram[i] << " ";
 	}
 	cout << endl << endl;
-	cout << stat.mean << endl;
-
-	double bmean, omean;
-	stat.setBOmeans(bmean,omean,stat.mean);
-
-	cout << bmean << " " << omean << endl;
+	
+	utility::optimalThresholding(img,R,.01);
 
 
 
