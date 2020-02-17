@@ -2,6 +2,7 @@
 #define STATISTICS_H
 
 #include "image.h"
+#include <cmath>
 
 class Image_Statistics{
     public:
