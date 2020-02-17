@@ -98,3 +98,15 @@ Image_Statistics utility::optimalThresholding(image& tgt, Region roi, double eps
 	return Image_Statistics(ip,roi);
 
 }
+
+Image_Statistics utility::backgoundStretching(image& tgt, image& binarized, Region roi){
+
+	for(int i = roi.i0; i < roi.ilim; i++){
+		for(int j = roi.j0; j < roi.jlim; j++){
+			if(binarized.getPixel(i,j) == MAXRGB){
+				tgt.setPixel(i,j,MINRGB);
+			}
+		}
+	}
+	return Image_Statistics(&tgt,roi);
+}

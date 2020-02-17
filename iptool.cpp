@@ -38,9 +38,14 @@ int main (int argc, char** argv){
 	// 	cout << i << ":" << stat.histogram[i] << " ";
 	// }
 	// cout << endl << endl;
-	
-	utility::optimalThresholding(img,R,.01);
-	img.save("threshold.pgm");
+	image bin(img);
+	image back(img);
+	utility::optimalThresholding(bin,R,.01);
+
+	Image_Statistics stat = utility::backgoundStretching(back,bin,R);
+	img.save("test_original.pgm");
+	bin.save("test_binarized.pgm");
+	back.save("test_background.pgm");
 
 
 
