@@ -21,7 +21,7 @@ int main (int argc, char** argv){
 	// cout << R.j0 << " to " << R.jlim << endl;
 
 	image img, *p;
-	img.read(strdup("baboon.pgm"));
+	img.read(strdup("slope.pgm"));
 	// for(int i = 2; i < 7; i++){
 	// 	for(int j = 2; j < 9; j++){
 	// 		cout << img.getPixel(i,j) << " ";
@@ -39,14 +39,16 @@ int main (int argc, char** argv){
 	// }
 	// cout << endl << endl;
 	image bin(img);
-	image back(img);
 	utility::optimalThresholding(bin,R,.01);
 
-	Image_Statistics stat = utility::backgoundStretching(back,bin,R);
-	img.save("test_original.pgm");
-	bin.save("test_binarized.pgm");
-	back.save("test_background.pgm");
+	image back(img);
+	image fore(img);
 
+	utility::backgound(back,bin,R);
+	utility::foreground(fore,bin,R);
+
+	back.save("test_back.pgm");
+	fore.save("test_fore.pgm");
 
 
 	// cout << img.getPixel(90,100) << " " << stat.pixel(90,100) << endl;

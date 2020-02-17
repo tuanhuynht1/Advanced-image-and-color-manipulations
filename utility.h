@@ -28,8 +28,12 @@ class utility
 		//optimal binarization, binarize image using optimal thresholding and returns image statistics
 		static Image_Statistics optimalThresholding(image& tgt, Region roi, double epsilon);
 
-		//takes in a binarize image and stretch background
-		static Image_Statistics backgoundStretching(image& tgt, image& binarized, Region roi);
+		//takes in a binarize image and and returns the image with the background region overlay
+		static Image_Statistics backgound(image& tgt, image& binarized, Region roi);
+
+		//takes in a binarize image and and returns the image with the foreground region overlay
+		static Image_Statistics foreground(image& tgt, image& binarized, Region roi);
+
 		
 
 };
