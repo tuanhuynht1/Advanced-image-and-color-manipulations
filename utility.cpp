@@ -74,15 +74,27 @@ Image_Statistics utility::optimalThresholding(image& tgt, Region roi, double eps
 	image* ip = &tgt;
     Image_Statistics stat(ip,roi);
 
+	//find the optimal threshold value
 	double backgroundMean, objectMean, tprev, t = stat.mean;
 	do{
 		tprev = t; //previous t value
 		stat.setBOmeans(backgroundMean,objectMean,tprev);
 		t = (backgroundMean + objectMean) / 2.0;
 		cout << backgroundMean << "," << objectMean << " " << t << "," << tprev << endl;
-	}while(abs(tprev - t) > epsilon);
+	}while(abs(tprev - t) > epsilon); 
 	
-	cout << endl << t << endl;
-	return stat;
+	//apply thresholding to roi
+	for(int i = roi.i0; i < roi.ilim; i++){
+		for(int j = roi.j0; j < roi.jlim; j++){
+			if(tgt.getPixel(i,j) < t){
+				tgt.setPixel(i,j,MINRGB);
+			}
+			else{
+				tgt.setPixel(i,j,MAXRGB);
+			}
+		}
+	}
+	//return updated image statistics
+	return Image_Statistics(ip,roi);
 
 }
