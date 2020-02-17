@@ -36,7 +36,7 @@ Image_Statistics::Image_Statistics(image* src, Region roi){
     }
     // generateNewHistogram();
     setMode(); //set value with highest frequency
-    cout << mode << endl;
+    // cout << mode << endl;
 }
 
 void Image_Statistics::setMode(){
