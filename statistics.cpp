@@ -34,6 +34,12 @@ Image_Statistics::Image_Statistics(image* src, Region roi){
             histogram[value]++; //increment frequency of that value
         }
     }
+    // generateNewHistogram();
+    setMode(); //set value with highest frequency
+    cout << mode << endl;
+}
+
+void Image_Statistics::setMode(){
     //iterate through histogram to find mode
     int highest = histogram[0];
     mode = 0;
@@ -41,6 +47,16 @@ Image_Statistics::Image_Statistics(image* src, Region roi){
         if(histogram[i] > highest){
             highest = histogram[i];
             mode = i;
+        }
+    }
+}
+
+void Image_Statistics::generateNewHistogram(){
+    vector<int> empty(HISTO_SIZE,0);   //clear histogram
+    histogram = empty;
+    for(int i = 0; i < region.ilen; i++){
+        for(int j = 0; j < region.jlen; j++){
+            histogram[pixel_map[i][j]]++;
         }
     }
 }

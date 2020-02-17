@@ -45,6 +45,8 @@ int main (int argc, char** argv){
 	stat.writeHistogramToFile("test.pgm");
 	// cout << stat.pixel_map.size() << " x " << stat.pixel_map[0].size() << endl; 
 
+	// utility::linearHistogramStretching(img,R,10,20);
+
 	// image src, tgt;
 	// FILE *fp;
 	// char str[MAXLEN];

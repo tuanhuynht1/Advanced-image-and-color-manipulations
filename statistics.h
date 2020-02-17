@@ -14,6 +14,9 @@ class Image_Statistics{
 
     Image_Statistics(image* src, Region roi);
     int pixel(int i, int j);
+    void setMode();
+    void generateNewHistogram();
+
     void writeHistogramToFile(string filename);
 
 };
