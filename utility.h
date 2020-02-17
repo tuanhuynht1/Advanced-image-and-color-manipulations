@@ -22,8 +22,8 @@ class utility
 		//HW1 parse helper function
 		static vector<char*> parse(char* str, int argc);
 
-		//histogram stretching between a and b
-		static void linearHistogramStretching(image& tgt, Region roi, int a, int b);
+		//histogram stretching between a and b, modiefies image and returns image statistics including new histogram
+		static Image_Statistics linearHistogramStretching(image& tgt, Region roi, int a, int b);
 		
 
 };

@@ -34,60 +34,38 @@ vector<char*> utility::parse(char* str, int argC){
 }
 
 
-void utility::linearHistogramStretching(image& tgt, Region roi, int a, int b){
+Image_Statistics utility::linearHistogramStretching(image& tgt, Region roi, int a, int b){
     image* ip = &tgt;
     Image_Statistics stat(ip,roi);
+    double stepsize = double(MAXRGB) / (b - a);
 
-
-    float stepsize = float(MAXRGB) / float(b - a);
-    cout << stepsize << endl;
-
+	//remap values
 	for(int i = 0; i < stat.pixel_map.size(); i++){
 		for(int j = 0; j < stat.pixel_map[0].size(); j++){
 			int value = stat.pixel_map[i][j];
-			// cout << value  << ":";
 			if(value < a){
 				value = MINRGB;
-				// cout << value << " ";
 			}
 			else if (value > b){
 				value = MAXRGB;
-				// cout << value << " ";
 			}
 			else{
-				float newVal = (value - a) * stepsize;
-				// value = int((value - a) * stepsize);
-				// stat.pixel_map[i][j] = value;
-				// cout << newVal << ":";
-				value = newVal;
-				// cout << value << " ";
+				double newVal = (value - a) * stepsize;
+				value = round(newVal);
 			}
 			stat.pixel_map[i][j] = value;
 		}
-		// cout << endl;
 	}
-
+	//modify original image according to the new value mapping
+	for(int i = roi.i0; i < roi.ilim; i++){
+		for(int j = roi.j0; j < roi.jlim; j++){
+			tgt.setPixel(i,j,stat.pixel(i,j));
+		}
+	}
+	// tgt.save("newImage.pgm");	
+	
+	// update statistics and return 
 	stat.generateNewHistogram();
 	stat.setMode();
-
-	cout << stat.histogram[stat.mode] << endl;
-
-	image output(HISTO_SIZE,HISTO_SIZE);
-
-    //coefficient for normalizing
-    float k = 255.0 / stat.histogram[stat.mode];
-	cout << k << endl;
-    for(int j = 0; j < HISTO_SIZE; j++){
-		cout << j << " ";
-        int count = int(stat.histogram[j] * k);  //normalize to fit
-        for(int i  = HISTO_SIZE - 1; i > HISTO_SIZE-1 - count; i--){
-            output.setPixel(i,j,MAXRGB);    //set each count to appear as a white pixel
-        }
-    }
-    output.save("test2.pgm");
-
-
-	// return stat;
-	// stat.writeHistogramToFile("stretch.pgm");
-
+	return stat;	
 }

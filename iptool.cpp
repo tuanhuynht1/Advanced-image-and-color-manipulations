@@ -16,7 +16,7 @@ using namespace std;
 int main (int argc, char** argv){
 
 
-	Region R(0,0,800,534);
+	Region R(0,0,200,100);
 	// cout << R.i0 << " to " << R.ilim << endl;
 	// cout << R.j0 << " to " << R.jlim << endl;
 
@@ -45,8 +45,8 @@ int main (int argc, char** argv){
 	stat.writeHistogramToFile("test.pgm");
 	// cout << stat.pixel_map.size() << " x " << stat.pixel_map[0].size() << endl; 
 
-	utility::linearHistogramStretching(img,R,100,200);
-	// stat2.writeHistogramToFile("test2.pgm");
+	stat = utility::linearHistogramStretching(img,R,100,200);
+	stat.writeHistogramToFile("test2.pgm");
 
 	// image src, tgt;
 	// FILE *fp;
