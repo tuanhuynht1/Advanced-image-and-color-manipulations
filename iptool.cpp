@@ -111,14 +111,15 @@ int main (int argc, char** argv){
 			
 			vector<Region> R;
 			double epsilon;
-			image bg, bg2, fg, fg2, binaraized;
+			image bg, bg2, fg, fg2, binarized;
 			string filename;
 			
 			//create images that detail the internal steps of twoLayerHistogramStretching
 			//for write to file purposes only
 			bg.copyImage(src);
-			// fg.copyImage(src);
-			binaraized.copyImage(src);
+			fg.copyImage(src);
+			binarized.copyImage(src);
+
 			for(int i = 0; i < number_of_regions; i++){
 				if (fgets(str,MAXLEN,fp) != NULL){
 
@@ -134,18 +135,33 @@ int main (int argc, char** argv){
 					Region roi(i_origin,j_origin,rows,cols);
 					R.push_back(roi);
 
-					utility::optimalThresholding(binaraized,roi,epsilon);
+					utility::optimalThresholding(binarized,roi,epsilon);
 
 				}
 			}
 
-			binaraized.save("test.pgm");
-			Image_Statistics ist = utility::backgound(bg,binaraized,R);
-			bg.save("test_bg.pgm");
-			ist.writeHistogramToFile("histo1.pgm");
-			ist = utility::linearHistogramStretching(bg,ist.region,ist.getMin(),ist.getMax());
-			bg.save("test_bg_after.pgm");
-			ist.writeHistogramToFile("histo2.pgm");
+			Image_Statistics ist_bg = utility::backgound(bg,binarized,R);
+			filename = name + "_bkg.pgm";
+			bg.save(filename.c_str());
+
+			Image_Statistics ist_fg = utility::foreground(fg,binarized,R);
+			filename = name + "_obj.pgm";
+			fg.save(filename.c_str());
+
+			for (int i = 0; i < number_of_regions; i++){
+				utility::linearHistogramStretching(bg,R[i],ist_bg.getMin(),ist_bg.getMax());
+				utility::linearHistogramStretching(fg,R[i],ist_fg.getMin(),ist_fg.getMax());
+			}
+
+			filename = name + "_bkg_lhs.pgm";
+			bg.save(filename.c_str());
+			filename = name + "_obj_lhs.pgm";
+			fg.save(filename.c_str());
+
+			// ist.writeHistogramToFile("histo1.pgm");
+			// ist = utility::linearHistogramStretching(bg,ist.region,ist.getMin(),ist.getMax());
+			// bg.save("test_bg_after.pgm");
+			// ist.writeHistogramToFile("histo2.pgm");
 		}
 			//binarize each region
 

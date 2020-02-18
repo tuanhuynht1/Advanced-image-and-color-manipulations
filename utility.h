@@ -32,7 +32,7 @@ class utility
 		static Image_Statistics backgound(image& tgt, image& binarized, vector<Region> R);
 
 		//takes in a binarize image and and returns the image with the foreground region overlay
-		static Image_Statistics foreground(image& tgt, image& binarized, Region roi);
+		static Image_Statistics foreground(image& tgt, image& binarized, vector<Region> R);
 
 		// takes an image, separate background and foreground and perform histogram stretching on 
 		static Image_Statistics twoLayerHistogramStretching(image& tgt, image& btgt, image& ftgt, Region roi, double epsilon);
