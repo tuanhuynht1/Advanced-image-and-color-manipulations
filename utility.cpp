@@ -99,16 +99,19 @@ Image_Statistics utility::optimalThresholding(image& tgt, Region roi, double eps
 
 }
 
-Image_Statistics utility::backgound(image& tgt, image& binarized, Region roi){
+Image_Statistics utility::backgound(image& tgt, image& binarized, vector<Region> R){
 
-	for(int i = roi.i0; i < roi.ilim; i++){
-		for(int j = roi.j0; j < roi.jlim; j++){
-			if(binarized.getPixel(i,j) == MAXRGB){
-				tgt.setPixel(i,j,MINRGB);
+	for(int r = 0; r < R.size(); r++){
+		for(int i = R[r].i0; i < R[r].ilim; i++){
+			for(int j = R[r].j0; j < R[r].jlim; j++){
+				if(binarized.getPixel(i,j) == MAXRGB){
+					tgt.setPixel(i,j,MINRGB);
+				}
 			}
 		}
 	}
-	return Image_Statistics(&tgt,roi);
+	
+	return Image_Statistics(&tgt,Region(0,0,tgt.getNumberOfRows(),tgt.getNumberOfColumns()));
 }
 
 Image_Statistics utility::foreground(image& tgt, image& binarized, Region roi){
@@ -125,35 +128,35 @@ Image_Statistics utility::foreground(image& tgt, image& binarized, Region roi){
 
 Image_Statistics utility::twoLayerHistogramStretching(image& tgt, image& bg, image& fg, Region roi, double epsilon){
 	
-	//binarize image
-	image binarized(tgt);
-	Image_Statistics binStat = optimalThresholding(binarized,roi,epsilon);
+	// //binarize image
+	// image binarized(tgt);
+	// Image_Statistics binStat = optimalThresholding(binarized,roi,epsilon);
 
-	int min, max;
+	// int min, max;
 
-	//stretch background
-	bg.copyImage(tgt);
-	Image_Statistics stat = backgound(bg,binarized,roi);
-	linearHistogramStretching(bg,roi,stat.getMin(),stat.getMax());
+	// //stretch background
+	// bg.copyImage(tgt);
+	// Image_Statistics stat = backgound(bg,binarized,roi);
+	// linearHistogramStretching(bg,roi,stat.getMin(),stat.getMax());
 
-	//stretch foreground
-	fg.copyImage(tgt);
-	stat = foreground(fg,binarized,roi);
-	linearHistogramStretching(fg,roi,stat.getMin(),stat.getMax());
+	// //stretch foreground
+	// fg.copyImage(tgt);
+	// stat = foreground(fg,binarized,roi);
+	// linearHistogramStretching(fg,roi,stat.getMin(),stat.getMax());
 
-	for (int i = roi.i0; i < roi.ilim; i++){
-		for(int j = roi.j0; j < roi.jlim; j++){
-			//if pixel is part of background
-			if(binStat.pixel(i,j) == MINRGB){
-				//set pixel as background stretched pixel
-				tgt.setPixel(i,j,bg.getPixel(i,j));
-			}
-			else{
-				//set pixel as foreground stretched pixel
-				tgt.setPixel(i,j,fg.getPixel(i,j));
-			}
-		}
-	}
+	// for (int i = roi.i0; i < roi.ilim; i++){
+	// 	for(int j = roi.j0; j < roi.jlim; j++){
+	// 		//if pixel is part of background
+	// 		if(binStat.pixel(i,j) == MINRGB){
+	// 			//set pixel as background stretched pixel
+	// 			tgt.setPixel(i,j,bg.getPixel(i,j));
+	// 		}
+	// 		else{
+	// 			//set pixel as foreground stretched pixel
+	// 			tgt.setPixel(i,j,fg.getPixel(i,j));
+	// 		}
+	// 	}
+	// }
 
 	return Image_Statistics(&tgt,roi);
 }

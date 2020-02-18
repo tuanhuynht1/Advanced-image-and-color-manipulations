@@ -104,7 +104,81 @@ int main (int argc, char** argv){
 			//output final image
 			name += "_opt.pgm";	//operation signature
 			src.save(name.c_str());
-		} 
+		}
+
+		//optimal Linear Stretching //------------------------------------------------------------------------
+		if(op.compare("ols") == 0){
+			
+			vector<Region> R;
+			double epsilon;
+			image bg, bg2, fg, fg2, binaraized;
+			string filename;
+			
+			//create images that detail the internal steps of twoLayerHistogramStretching
+			//for write to file purposes only
+			bg.copyImage(src);
+			// fg.copyImage(src);
+			binaraized.copyImage(src);
+			for(int i = 0; i < number_of_regions; i++){
+				if (fgets(str,MAXLEN,fp) != NULL){
+
+					//read in arguemnts for next roi operation
+					argV = utility::parse(str,6);
+					i_origin = atoi(argV[0]);
+					j_origin = atoi(argV[1]);
+					rows = atoi(argV[2]);
+					cols = atoi(argV[3]);
+					epsilon = atof(argV[4]);
+
+					//save each region for later operations
+					Region roi(i_origin,j_origin,rows,cols);
+					R.push_back(roi);
+
+					utility::optimalThresholding(binaraized,roi,epsilon);
+
+				}
+			}
+
+			binaraized.save("test.pgm");
+			Image_Statistics ist = utility::backgound(bg,binaraized,R);
+			bg.save("test_bg.pgm");
+
+		}
+			//binarize each region
+
+			
+
+					//initialize roi
+					
+
+					// utility::twoLayerHistogramStretching(src,bg,fg,roi,epsilon);
+
+					// //next 3 steps are for write to file purposes only, twoLayerHistogramStretching
+					// //will do the exact same thing but only produces the final results
+
+					// //get binarized image 
+					// binaraized.copyImage(src);
+					// utility::optimalThresholding(binaraized,roi,epsilon);
+
+					// //background before and after
+					// Image_Statistics ist = utility::backgound(bg,binaraized,roi);
+					// bg2.copyImage(bg);
+					// utility::linearHistogramStretching(bg2,roi,ist.getMin(),ist.getMax());
+
+					// //foreground before and after
+					// ist = utility::foreground(fg,binaraized,roi);
+					// fg2.copyImage(fg);
+					// utility::linearHistogramStretching(fg2,roi,ist.getMin(),ist.getMax());
+				//}
+			//}
+
+		// 	filename = name + "_bkg.pgm";
+		// 	bg.save(filename.c_str());
+		// 	filename = name + "_obj.pgm";
+		// 	fg.save(filename.c_str());
+		// 	filename = name + "_ols.pgm";
+		// 	src.save(filename.c_str());
+		// } 
 
 	}
 	
