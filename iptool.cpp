@@ -142,7 +142,10 @@ int main (int argc, char** argv){
 			binaraized.save("test.pgm");
 			Image_Statistics ist = utility::backgound(bg,binaraized,R);
 			bg.save("test_bg.pgm");
-
+			ist.writeHistogramToFile("histo1.pgm");
+			ist = utility::linearHistogramStretching(bg,ist.region,ist.getMin(),ist.getMax());
+			bg.save("test_bg_after.pgm");
+			ist.writeHistogramToFile("histo2.pgm");
 		}
 			//binarize each region
 
