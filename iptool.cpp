@@ -39,7 +39,7 @@ int main (int argc, char** argv){
 		op = argV[2];						//operation		
 		number_of_regions = atoi(argV[3]);	//number of roi
 
-		//for linear histogram stretching
+		//linear histogram stretching //---------------------------------------------------------------------
 		if(op.compare("lhs") == 0){
 			
 			int a, b;
@@ -58,7 +58,7 @@ int main (int argc, char** argv){
 					//initialize roi
 					Region roi(i_origin,j_origin,rows,cols);
 
-					//initialize name for current region's histogram
+					//initialize name extension for current region's histogram
 					string hist_name = name;
 					hist_name += ("_hist" + to_string(i+1));
 
@@ -78,6 +78,33 @@ int main (int argc, char** argv){
 			name += "_lhs.pgm";	//operation signature
 			src.save(name.c_str());
 		}
+
+		//optimal thresholding //-----------------------------------------------------------------------------
+		if(op.compare("opt") == 0){
+
+			double epsilon;
+			for(int i = 0; i < number_of_regions; i++){
+				if (fgets(str,MAXLEN,fp) != NULL){
+
+					//read in arguemnts for next roi operation
+					argV = utility::parse(str,6);
+					i_origin = atoi(argV[0]);
+					j_origin = atoi(argV[1]);
+					rows = atoi(argV[2]);
+					cols = atoi(argV[3]);
+					epsilon = atof(argV[4]);
+
+					//initialize roi
+					Region roi(i_origin,j_origin,rows,cols);
+
+					//perform modification on src image
+					utility::optimalThresholding(src,roi,epsilon);
+				}
+			}
+			//output final image
+			name += "_opt.pgm";	//operation signature
+			src.save(name.c_str());
+		} 
 
 	}
 	
