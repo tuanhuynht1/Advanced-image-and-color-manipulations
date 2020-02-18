@@ -35,7 +35,7 @@ class utility
 		static Image_Statistics foreground(image& tgt, image& binarized, Region roi);
 
 		// takes an image, separate background and foreground and perform histogram stretching on 
-		static Image_Statistics twoLayerHistogramStretching(image& tgt, Region roi, double epsilon);
+		static Image_Statistics twoLayerHistogramStretching(image& tgt, image& btgt, image& ftgt, Region roi, double epsilon);
 
 		
 

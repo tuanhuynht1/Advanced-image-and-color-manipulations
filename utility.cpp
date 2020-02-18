@@ -123,7 +123,7 @@ Image_Statistics utility::foreground(image& tgt, image& binarized, Region roi){
 	return Image_Statistics(&tgt,roi);
 }
 
-Image_Statistics utility::twoLayerHistogramStretching(image& tgt, Region roi, double epsilon){
+Image_Statistics utility::twoLayerHistogramStretching(image& tgt, image& bg, image& fg, Region roi, double epsilon){
 	
 	//binarize image
 	image binarized(tgt);
@@ -132,12 +132,12 @@ Image_Statistics utility::twoLayerHistogramStretching(image& tgt, Region roi, do
 	int min, max;
 
 	//stretch background
-	image bg(tgt);
+	bg.copyImage(tgt);
 	Image_Statistics stat = backgound(bg,binarized,roi);
 	linearHistogramStretching(bg,roi,stat.getMin(),stat.getMax());
 
 	//stretch foreground
-	image fg(tgt);
+	fg.copyImage(tgt);
 	stat = foreground(fg,binarized,roi);
 	linearHistogramStretching(fg,roi,stat.getMin(),stat.getMax());
 
@@ -155,11 +155,5 @@ Image_Statistics utility::twoLayerHistogramStretching(image& tgt, Region roi, do
 		}
 	}
 
-	// bg.save("test_bg.pgm");
-	// fg.save("test.fg.pgm");
-
-
 	return Image_Statistics(&tgt,roi);
-
-
 }

@@ -16,92 +16,72 @@ using namespace std;
 int main (int argc, char** argv){
 
 
-	Region R(0,0,450,500);
-	// cout << R.i0 << " to " << R.ilim << endl;
-	// cout << R.j0 << " to " << R.jlim << endl;
-
-	image img, *p;
-	img.read(strdup("13.pgm"));
-	p = &img;
-
-	Image_Statistics og(p,R);
-	og.writeHistogramToFile("test_og.pgm");
-
-	Image_Statistics stat = utility::linearHistogramStretching(img,R, 0, 200);
-	img.save("test_image.pgm");
-	stat.writeHistogramToFile("test_hist.pgm");
-
-	// for(int i = 2; i < 7; i++){
-	// 	for(int j = 2; j < 9; j++){
-	// 		cout << img.getPixel(i,j) << " ";
-	// 	}
-	// 	cout << endl;
-	// }
-	// p = &img;
-
-	// cout << endl;
-	// Image_Statistics stat(p,R);
-	// cout << endl;
-	// for(int i = 0; i < 256; i++){
-	// 	if(stat.histogram[i] > 0)
-	// 	cout << i << ":" << stat.histogram[i] << " ";
-	// }
-	// cout << endl << endl;
-	// image bin(img);
-	// utility::optimalThresholding(bin,R,.01);
-
-	// image back(img);
-	// image fore(img);
-
-	// utility::backgound(back,bin,R);
-	// utility::foreground(fore,bin,R);
-
-	// back.save("test_back.pgm");
-	// fore.save("test_fore.pgm");
-
-
-	// cout << img.getPixel(90,100) << " " << stat.pixel(90,100) << endl;
-
-	// stat.writeHistogramToFile("test.pgm");
-	// cout << stat.pixel_map.size() << " x " << stat.pixel_map[0].size() << endl; 
-
-	// stat = utility::linearHistogramStretching(img,R,100,200);
-	// stat.writeHistogramToFile("test2.pgm");
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	// image src, tgt;
-	// FILE *fp;
-	// char str[MAXLEN];
-	// char outfile[MAXLEN];
-
-	// if ((fp = fopen(argv[1],"r")) == NULL) {
-	// 	fprintf(stderr, "Can't open file: %s\n", argv[1]);
-	// 	exit(1);
-	// }
-
 	
-	// fclose(fp);
+	image src, *ip;
+	FILE *fp;
+	char str[MAXLEN];
+
+	if ((fp = fopen(argv[1],"r")) == NULL) {
+		fprintf(stderr, "Can't open file: %s\n", argv[1]);
+		exit(1);
+	}
+
+	vector<char*> argV;
+	int rows, cols, i_origin, j_origin, number_of_regions;
+	string name, op;
+
+	while(fgets(str,MAXLEN,fp) != NULL){
+
+		//parse line into argument Vector for each operation
+		argV = utility::parse(str,4);
+		src.read(argV[0]);					//input file
+		name = argV[1];						//name for basis of output files
+		op = argV[2];						//operation		
+		number_of_regions = atoi(argV[3]);	//number of roi
+
+		//for linear histogram stretching
+		if(op.compare("lhs") == 0){
+			
+			int a, b;
+			for(int i = 0; i < number_of_regions; i++){
+				if (fgets(str,MAXLEN,fp) != NULL){
+
+					//read in arguemnts for next roi operation
+					argV = utility::parse(str,6);
+					i_origin = atoi(argV[0]);
+					j_origin = atoi(argV[1]);
+					rows = atoi(argV[2]);
+					cols = atoi(argV[3]);
+					a = atoi(argV[4]);
+					b = atoi(argV[5]);
+
+					//initialize roi
+					Region roi(i_origin,j_origin,rows,cols);
+
+					//initialize name for current region's histogram
+					string hist_name = name;
+					hist_name += ("_hist" + to_string(i+1));
+
+					//write histogram before stretching
+					ip = &src;	//image pointer
+					Image_Statistics src_stat(ip,roi);
+					src_stat.writeHistogramToFile(hist_name + "_src.pgm");
+					
+					//perform modification on src
+					Image_Statistics stat = utility::linearHistogramStretching(src,roi,a,b);
+
+					//write histogram after stretching
+					stat.writeHistogramToFile(hist_name + ".pgm");
+				}
+			}
+			//output final image
+			name += "_lhs.pgm";	//operation signature
+			src.save(name.c_str());
+		}
+
+	}
+	
+	fclose(fp);
 
 	return 0;
 }
