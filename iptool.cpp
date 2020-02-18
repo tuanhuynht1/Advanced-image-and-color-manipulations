@@ -16,19 +16,28 @@ using namespace std;
 int main (int argc, char** argv){
 
 
-	Region R(0,0,500,500);
+	Region R(0,0,450,500);
 	// cout << R.i0 << " to " << R.ilim << endl;
 	// cout << R.j0 << " to " << R.jlim << endl;
 
 	image img, *p;
-	img.read(strdup("slope.pgm"));
+	img.read(strdup("13.pgm"));
+	p = &img;
+
+	Image_Statistics og(p,R);
+	og.writeHistogramToFile("test_og.pgm");
+
+	Image_Statistics stat = utility::linearHistogramStretching(img,R, 0, 200);
+	img.save("test_image.pgm");
+	stat.writeHistogramToFile("test_hist.pgm");
+
 	// for(int i = 2; i < 7; i++){
 	// 	for(int j = 2; j < 9; j++){
 	// 		cout << img.getPixel(i,j) << " ";
 	// 	}
 	// 	cout << endl;
 	// }
-	p = &img;
+	// p = &img;
 
 	// cout << endl;
 	// Image_Statistics stat(p,R);
@@ -38,17 +47,17 @@ int main (int argc, char** argv){
 	// 	cout << i << ":" << stat.histogram[i] << " ";
 	// }
 	// cout << endl << endl;
-	image bin(img);
-	utility::optimalThresholding(bin,R,.01);
+	// image bin(img);
+	// utility::optimalThresholding(bin,R,.01);
 
-	image back(img);
-	image fore(img);
+	// image back(img);
+	// image fore(img);
 
-	utility::backgound(back,bin,R);
-	utility::foreground(fore,bin,R);
+	// utility::backgound(back,bin,R);
+	// utility::foreground(fore,bin,R);
 
-	back.save("test_back.pgm");
-	fore.save("test_fore.pgm");
+	// back.save("test_back.pgm");
+	// fore.save("test_fore.pgm");
 
 
 	// cout << img.getPixel(90,100) << " " << stat.pixel(90,100) << endl;

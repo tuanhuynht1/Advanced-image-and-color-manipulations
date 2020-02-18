@@ -16,10 +16,13 @@ class Image_Statistics{
 
     Image_Statistics(image* src, Region roi);
     int pixel(int i, int j);
+    int getMin();
+    int getMax();
     void setMean();
     void setMode();
     void generateNewHistogram();
     void setBOmeans(double& background, double& object, double threshold);
+
 
     void writeHistogramToFile(string filename);
 

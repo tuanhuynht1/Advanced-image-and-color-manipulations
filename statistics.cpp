@@ -100,6 +100,24 @@ int Image_Statistics::pixel(int i, int j){
     return pixel_map[i - region.i0][j - region.j0];
 }
 
+int Image_Statistics::getMin(){
+    for (int i = 1; i < HISTO_SIZE; i++){
+        if (histogram[i] > 0){
+            return i;
+        }
+    }
+    return MINRGB;
+}
+
+int Image_Statistics::getMax(){
+    for (int i = MAXRGB - 1; i >= 1; i--){
+        if (histogram[i] > 0){
+            return i;
+        }
+    }
+    return MINRGB;
+}
+
 void Image_Statistics::writeHistogramToFile(string filename){
     image output(HISTO_SIZE,HISTO_SIZE);
 

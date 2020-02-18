@@ -122,3 +122,44 @@ Image_Statistics utility::foreground(image& tgt, image& binarized, Region roi){
 	}
 	return Image_Statistics(&tgt,roi);
 }
+
+Image_Statistics utility::twoLayerHistogramStretching(image& tgt, Region roi, double epsilon){
+	
+	//binarize image
+	image binarized(tgt);
+	Image_Statistics binStat = optimalThresholding(binarized,roi,epsilon);
+
+	int min, max;
+
+	//stretch background
+	image bg(tgt);
+	Image_Statistics stat = backgound(bg,binarized,roi);
+	linearHistogramStretching(bg,roi,stat.getMin(),stat.getMax());
+
+	//stretch foreground
+	image fg(tgt);
+	stat = foreground(fg,binarized,roi);
+	linearHistogramStretching(fg,roi,stat.getMin(),stat.getMax());
+
+	for (int i = roi.i0; i < roi.ilim; i++){
+		for(int j = roi.j0; j < roi.jlim; j++){
+			//if pixel is part of background
+			if(binStat.pixel(i,j) == MINRGB){
+				//set pixel as background stretched pixel
+				tgt.setPixel(i,j,bg.getPixel(i,j));
+			}
+			else{
+				//set pixel as foreground stretched pixel
+				tgt.setPixel(i,j,fg.getPixel(i,j));
+			}
+		}
+	}
+
+	// bg.save("test_bg.pgm");
+	// fg.save("test.fg.pgm");
+
+
+	return Image_Statistics(&tgt,roi);
+
+
+}
