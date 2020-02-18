@@ -80,7 +80,6 @@ Image_Statistics utility::optimalThresholding(image& tgt, Region roi, double eps
 		tprev = t; //previous t value
 		stat.setBOmeans(backgroundMean,objectMean,tprev);
 		t = (backgroundMean + objectMean) / 2.0;
-		cout << backgroundMean << "," << objectMean << " " << t << "," << tprev << endl;
 	}while(abs(tprev - t) > epsilon); 
 	
 	//apply thresholding to roi
@@ -129,37 +128,22 @@ Image_Statistics utility::foreground(image& tgt, image& binarized, vector<Region
 	return Image_Statistics(&tgt,Region(0,0,tgt.getNumberOfRows(),tgt.getNumberOfColumns()));
 }
 
-Image_Statistics utility::twoLayerHistogramStretching(image& tgt, image& bg, image& fg, Region roi, double epsilon){
-	
-	// //binarize image
-	// image binarized(tgt);
-	// Image_Statistics binStat = optimalThresholding(binarized,roi,epsilon);
+Image_Statistics utility::combine(image& tgt, image& binarized, image& bg, image& fg, vector<Region> R){
 
-	// int min, max;
-
-	// //stretch background
-	// bg.copyImage(tgt);
-	// Image_Statistics stat = backgound(bg,binarized,roi);
-	// linearHistogramStretching(bg,roi,stat.getMin(),stat.getMax());
-
-	// //stretch foreground
-	// fg.copyImage(tgt);
-	// stat = foreground(fg,binarized,roi);
-	// linearHistogramStretching(fg,roi,stat.getMin(),stat.getMax());
-
-	// for (int i = roi.i0; i < roi.ilim; i++){
-	// 	for(int j = roi.j0; j < roi.jlim; j++){
-	// 		//if pixel is part of background
-	// 		if(binStat.pixel(i,j) == MINRGB){
-	// 			//set pixel as background stretched pixel
-	// 			tgt.setPixel(i,j,bg.getPixel(i,j));
-	// 		}
-	// 		else{
-	// 			//set pixel as foreground stretched pixel
-	// 			tgt.setPixel(i,j,fg.getPixel(i,j));
-	// 		}
-	// 	}
-	// }
-
-	return Image_Statistics(&tgt,roi);
+	for(int r = 0 ; r < R.size(); r++){
+		Region roi = R[r];
+		for(int i = roi.i0; i < roi.ilim; i++){
+			for(int j = roi.j0; j < roi.jlim; j++){
+				//background pixel
+				if (binarized.getPixel(i,j) == MINRGB){
+					tgt.setPixel(i,j,bg.getPixel(i,j));
+				}
+				//foreground pixel
+				else{
+					tgt.setPixel(i,j,fg.getPixel(i,j));
+				}
+			}
+		}
+	}
+	return Image_Statistics(&tgt,Region(0,0,tgt.getNumberOfRows(),tgt.getNumberOfColumns()));
 }

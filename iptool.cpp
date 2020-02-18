@@ -114,15 +114,14 @@ int main (int argc, char** argv){
 			image bg, bg2, fg, fg2, binarized;
 			string filename;
 			
-			//create images that detail the internal steps of twoLayerHistogramStretching
-			//for write to file purposes only
+			//dummy images to rewritten
 			bg.copyImage(src);
 			fg.copyImage(src);
 			binarized.copyImage(src);
 
+			//create region vector
 			for(int i = 0; i < number_of_regions; i++){
 				if (fgets(str,MAXLEN,fp) != NULL){
-
 					//read in arguemnts for next roi operation
 					argV = utility::parse(str,6);
 					i_origin = atoi(argV[0]);
@@ -134,71 +133,35 @@ int main (int argc, char** argv){
 					//save each region for later operations
 					Region roi(i_origin,j_origin,rows,cols);
 					R.push_back(roi);
-
+					//save binarized image for pixel classification
 					utility::optimalThresholding(binarized,roi,epsilon);
 
 				}
 			}
-
+			//write backgound before
 			Image_Statistics ist_bg = utility::backgound(bg,binarized,R);
 			filename = name + "_bkg.pgm";
 			bg.save(filename.c_str());
-
+			//write foreground before
 			Image_Statistics ist_fg = utility::foreground(fg,binarized,R);
 			filename = name + "_obj.pgm";
 			fg.save(filename.c_str());
-
+			//apply linear stretching to bg and fg
 			for (int i = 0; i < number_of_regions; i++){
 				utility::linearHistogramStretching(bg,R[i],ist_bg.getMin(),ist_bg.getMax());
 				utility::linearHistogramStretching(fg,R[i],ist_fg.getMin(),ist_fg.getMax());
 			}
-
+			//write linear stretched to file
 			filename = name + "_bkg_lhs.pgm";
 			bg.save(filename.c_str());
 			filename = name + "_obj_lhs.pgm";
 			fg.save(filename.c_str());
-
-			// ist.writeHistogramToFile("histo1.pgm");
-			// ist = utility::linearHistogramStretching(bg,ist.region,ist.getMin(),ist.getMax());
-			// bg.save("test_bg_after.pgm");
-			// ist.writeHistogramToFile("histo2.pgm");
+			// combine images into one and write to file
+			utility::combine(src,binarized,bg,fg,R);
+			filename = name + "_ols.pgm";
+			src.save(filename.c_str());
 		}
-			//binarize each region
-
 			
-
-					//initialize roi
-					
-
-					// utility::twoLayerHistogramStretching(src,bg,fg,roi,epsilon);
-
-					// //next 3 steps are for write to file purposes only, twoLayerHistogramStretching
-					// //will do the exact same thing but only produces the final results
-
-					// //get binarized image 
-					// binaraized.copyImage(src);
-					// utility::optimalThresholding(binaraized,roi,epsilon);
-
-					// //background before and after
-					// Image_Statistics ist = utility::backgound(bg,binaraized,roi);
-					// bg2.copyImage(bg);
-					// utility::linearHistogramStretching(bg2,roi,ist.getMin(),ist.getMax());
-
-					// //foreground before and after
-					// ist = utility::foreground(fg,binaraized,roi);
-					// fg2.copyImage(fg);
-					// utility::linearHistogramStretching(fg2,roi,ist.getMin(),ist.getMax());
-				//}
-			//}
-
-		// 	filename = name + "_bkg.pgm";
-		// 	bg.save(filename.c_str());
-		// 	filename = name + "_obj.pgm";
-		// 	fg.save(filename.c_str());
-		// 	filename = name + "_ols.pgm";
-		// 	src.save(filename.c_str());
-		// } 
-
 	}
 	
 	fclose(fp);
