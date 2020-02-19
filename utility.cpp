@@ -33,6 +33,42 @@ vector<char*> utility::parse(char* str, int argC){
 	return arguments;
 }
 
+Color_Image_Statistics utility::colorHistogramStretching(image& tgt, Region roi, channel c, int a, int b){
+	image* ip = &tgt;
+    Color_Image_Statistics stat(ip,roi,c);
+    double stepsize = double(MAXRGB) / (b - a);
+
+	//remap values
+	for(int i = 0; i < stat.pixel_map.size(); i++){
+		for(int j = 0; j < stat.pixel_map[0].size(); j++){
+			int value = stat.pixel_map[i][j];
+			if(value < a){
+				value = MINRGB;
+			}
+			else if (value > b){
+				value = MAXRGB;
+			}
+			else{
+				double newVal = (value - a) * stepsize;
+				value = round(newVal);
+			}
+			stat.pixel_map[i][j] = value;
+		}
+	}
+	//modify original image according to the new value mapping
+	for(int i = roi.i0; i < roi.ilim; i++){
+		for(int j = roi.j0; j < roi.jlim; j++){
+			tgt.setPixel(i,j,c,stat.pixel(i,j));
+		}
+	}
+	tgt.save("newImage.ppm");	
+	
+	// update statistics and return 
+	stat.generateNewHistogram();
+	stat.setMode();
+	return stat;	
+}
+
 
 Image_Statistics utility::linearHistogramStretching(image& tgt, Region roi, int a, int b){
     image* ip = &tgt;

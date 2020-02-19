@@ -15,37 +15,11 @@ using namespace std;
 
 int main (int argc, char** argv){
 
-
-
+	Region r(0,0,300,300);
 	image img, *ip;
 	img.read(strdup("frog.ppm"));
-	ip = &img;
-	Region r(100,100,200,200);
+	utility::colorHistogramStretching(img,r,GREEN,50,200);
 
-	for(int i = 100; i < 300; i++){
-		for(int j = 100; j < 300; j++){
-			cout << img.getPixel(i,j,RED) << "," << img.getPixel(i,j,GREEN) << "," << img.getPixel(i,j,BLUE) << " ";
-		}
-		cout << endl;
-	}
-	cout << endl;
-
-	Color_Image_Statistics red(ip,r,RED);
-	Color_Image_Statistics green(ip,r,GREEN);
-	Color_Image_Statistics blue(ip,r,BLUE);
-
-
-	for(int i = 100; i < 300; i++){
-		for(int j = 100; j < 300; j++){
-			cout << red.pixel(i,j) << "," << green.pixel(i,j) << "," << blue.pixel(i,j) << " ";
-		}
-		cout << endl;
-	}
-
-	red.writeHistogramToFile("red.pgm");
-	green.writeHistogramToFile("green.pgm");
-	blue.writeHistogramToFile("blue.pgm");
-	
 	// image src, *ip;
 	// FILE *fp;
 	// char str[MAXLEN];

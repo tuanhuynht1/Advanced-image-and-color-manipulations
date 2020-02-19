@@ -37,7 +37,8 @@ class utility
 		//combine background and foreground images using the binarized image as a layer arbitrator
 		static Image_Statistics combine(image& tgt, image& binarized, image& bg, image& fg, vector<Region> R);
 
-
+		//color image stretching
+		static Color_Image_Statistics colorHistogramStretching(image& tgt, Region roi, channel c, int a, int b);
 		
 
 };
