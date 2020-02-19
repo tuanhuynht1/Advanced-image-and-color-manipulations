@@ -14,6 +14,7 @@ class Image_Statistics{
     int mode;
     double mean;
 
+    Image_Statistics(){;}   //default constructor   
     Image_Statistics(image* src, Region roi);
     int pixel(int i, int j);
     int getMin();
@@ -22,10 +23,15 @@ class Image_Statistics{
     void setMode();
     void generateNewHistogram();
     void setBOmeans(double& background, double& object, double threshold);
-
-
     void writeHistogramToFile(string filename);
 
+};
+
+//inherits image statistics, enforces a channel specification
+class Color_Image_Statistics : public Image_Statistics{
+    public:
+    channel color;
+    Color_Image_Statistics(image* src, Region roi, channel RGB);
 };
 
 #endif
