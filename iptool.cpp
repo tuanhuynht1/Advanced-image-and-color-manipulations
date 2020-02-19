@@ -205,6 +205,12 @@ int main (int argc, char** argv){
 						blue.writeHistogramToFile(name + "_blue_hist" + to_string(i+1) + ".pgm");
 					}
 
+					else if(rgb.compare("*") == 0){
+						utility::colorHistogramStretching(src,roi,RED,a,b);
+						utility::colorHistogramStretching(src,roi,GREEN,a,b);
+						utility::colorHistogramStretching(src,roi,BLUE,a,b);
+					}
+
 				}
 			}
 			string filename = name + "_chs.ppm";
