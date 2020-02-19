@@ -13,6 +13,7 @@ using namespace std;
 
 #define MAXLEN 256
 
+
 int main (int argc, char** argv){
 
 	image src, *ip;
@@ -65,8 +66,11 @@ int main (int argc, char** argv){
 					Image_Statistics src_stat(ip,roi);
 					src_stat.writeHistogramToFile(hist_name + "_src.pgm");
 					
+					auto started = chrono::high_resolution_clock::now();
 					//perform modification on src
 					Image_Statistics stat = utility::linearHistogramStretching(src,roi,a,b);
+					auto done = chrono::high_resolution_clock::now();
+					cout << chrono::duration_cast<chrono::milliseconds>(done-started).count() << " ms (linear histogram stretching)" << endl;
 
 					//write histogram after stretching
 					stat.writeHistogramToFile(hist_name + ".pgm");
@@ -95,8 +99,11 @@ int main (int argc, char** argv){
 					//initialize roi
 					Region roi(i_origin,j_origin,rows,cols);
 
+					auto started = chrono::high_resolution_clock::now();
 					//perform modification on src image
 					utility::optimalThresholding(src,roi,epsilon);
+					auto done = chrono::high_resolution_clock::now();
+					cout << chrono::duration_cast<chrono::milliseconds>(done-started).count() << " ms (optimal thresholding)" << endl;
 				}
 			}
 			//output final image
@@ -117,6 +124,10 @@ int main (int argc, char** argv){
 			fg.copyImage(src);
 			binarized.copyImage(src);
 
+			image* ip = &src;
+			Image_Statistics ist(ip,Region(0,0,src.getNumberOfRows(),src.getNumberOfColumns()));
+			ist.writeHistogramToFile(name + "_hist_src.pgm");
+
 			//create region vector
 			for(int i = 0; i < number_of_regions; i++){
 				if (fgets(str,MAXLEN,fp) != NULL){
@@ -131,6 +142,7 @@ int main (int argc, char** argv){
 					//save each region for later operations
 					Region roi(i_origin,j_origin,rows,cols);
 					R.push_back(roi);
+
 					//save binarized image for pixel classification
 					utility::optimalThresholding(binarized,roi,epsilon);
 
@@ -138,26 +150,41 @@ int main (int argc, char** argv){
 			}
 			//write backgound before
 			Image_Statistics ist_bg = utility::backgound(bg,binarized,R);
-			filename = name + "_bkg.pgm";
+			filename = name + "_bkg_src.pgm";
 			bg.save(filename.c_str());
+			ist_bg.writeHistogramToFile(name + "_bkg_hist_src.pgm");
+
 			//write foreground before
 			Image_Statistics ist_fg = utility::foreground(fg,binarized,R);
-			filename = name + "_obj.pgm";
+			filename = name + "_obj_src.pgm";
 			fg.save(filename.c_str());
+			ist_fg.writeHistogramToFile(name + "_obj_hist_src.pgm");
+
+
+			auto started = chrono::high_resolution_clock::now();
 			//apply linear stretching to bg and fg
 			for (int i = 0; i < number_of_regions; i++){
-				utility::linearHistogramStretching(bg,R[i],ist_bg.getMin(),ist_bg.getMax());
-				utility::linearHistogramStretching(fg,R[i],ist_fg.getMin(),ist_fg.getMax());
+				ist_bg = utility::linearHistogramStretching(bg,R[i],ist_bg.getMin(),ist_bg.getMax());
+				ist_fg = utility::linearHistogramStretching(fg,R[i],ist_fg.getMin(),ist_fg.getMax());
 			}
-			//write linear stretched to file
-			filename = name + "_bkg_lhs.pgm";
-			bg.save(filename.c_str());
-			filename = name + "_obj_lhs.pgm";
-			fg.save(filename.c_str());
 			// combine images into one and write to file
-			utility::combine(src,binarized,bg,fg,R);
+			ist = utility::combine(src,binarized,bg,fg,R);
+			auto done = chrono::high_resolution_clock::now();
+			cout << chrono::duration_cast<chrono::milliseconds>(done-started).count() << " ms (optimal stretching for " << number_of_regions << " regions)" << endl;
+
+
+
+			//write image
+			filename = name + "_bkg.pgm";
+			bg.save(filename.c_str());
+			filename = name + "_obj.pgm";
+			fg.save(filename.c_str());
 			filename = name + "_ols.pgm";
 			src.save(filename.c_str());
+			//write histograms
+			ist.writeHistogramToFile(name + "_hist.pgm");
+			ist_bg.writeHistogramToFile(name + "_bkg_hist.pgm");
+			ist_fg.writeHistogramToFile(name + "_obj_hist.pgm");
 		}
 
 		//Color Histogram Stretching //------------------------------------------------------------------------
@@ -181,35 +208,48 @@ int main (int argc, char** argv){
 					//initialize roi
 					Region roi(i_origin,j_origin,rows,cols);
 					
+
 					if(rgb.compare("r") == 0){
-						cout << 'r' << endl;
 						Color_Image_Statistics red(ip,roi,RED);
 						red.writeHistogramToFile(name + "_red_hist" + to_string(i+1) +"_src.pgm");
+						auto started = chrono::high_resolution_clock::now();
 						red = utility::colorHistogramStretching(src,roi,RED,a,b);
+						auto done = chrono::high_resolution_clock::now();
 						red.writeHistogramToFile(name + "_red_hist" + to_string(i+1) + ".pgm");
+						cout << chrono::duration_cast<chrono::milliseconds>(done-started).count() << " ms (color stretching)" << endl;
 					}
 
 					else if(rgb.compare("g") == 0){
-						cout << 'g' << endl;
 						Color_Image_Statistics green(ip,roi,GREEN);
 						green.writeHistogramToFile(name + "_green_hist" + to_string(i+1) +"_src.pgm");
+						auto started = chrono::high_resolution_clock::now();
 						green = utility::colorHistogramStretching(src,roi,GREEN,a,b);
+						auto done = chrono::high_resolution_clock::now();
 						green.writeHistogramToFile(name + "_green_hist" + to_string(i+1) + ".pgm");
+						cout << chrono::duration_cast<chrono::milliseconds>(done-started).count() << " ms (color stretching)" << endl;
 					}
 
 					else if(rgb.compare("b") == 0){
-						cout << 'b' << endl;
 						Color_Image_Statistics blue(ip,roi,BLUE);
 						blue.writeHistogramToFile(name + "_blue_hist" + to_string(i+1) +"_src.pgm");
+						auto started = chrono::high_resolution_clock::now();
 						blue = utility::colorHistogramStretching(src,roi,BLUE,a,b);
+						auto done = chrono::high_resolution_clock::now();
 						blue.writeHistogramToFile(name + "_blue_hist" + to_string(i+1) + ".pgm");
+						cout << chrono::duration_cast<chrono::milliseconds>(done-started).count() << " ms (color stretching)" << endl;
 					}
 
 					else if(rgb.compare("*") == 0){
+						auto started = chrono::high_resolution_clock::now();
 						utility::colorHistogramStretching(src,roi,RED,a,b);
 						utility::colorHistogramStretching(src,roi,GREEN,a,b);
 						utility::colorHistogramStretching(src,roi,BLUE,a,b);
+						auto done = chrono::high_resolution_clock::now();
+						cout << chrono::duration_cast<chrono::milliseconds>(done-started).count() << " ms (color stretching)" << endl;
 					}
+
+					
+					
 
 				}
 			}
