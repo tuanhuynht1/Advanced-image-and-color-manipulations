@@ -61,8 +61,7 @@ Color_Image_Statistics utility::colorHistogramStretching(image& tgt, Region roi,
 			tgt.setPixel(i,j,c,stat.pixel(i,j));
 		}
 	}
-	tgt.save("newImage.ppm");	
-	
+	// tgt.save("newImage.ppm");	
 	// update statistics and return 
 	stat.generateNewHistogram();
 	stat.setMode();
